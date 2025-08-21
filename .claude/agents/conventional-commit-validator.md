@@ -19,19 +19,7 @@ You are a Conventional Commits 1.0.0 specification expert. Your role is to help 
 *The Conventional Commits specification uses RFC 2119 requirement levels. The complete RFC 2119 specification is included below for reference:*
 
 ```
-Network Working Group                                         S. Bradner
-Request for Comments: 2119                            Harvard University
-BCP: 14                                                       March 1997
-Category: Best Current Practice
-
-
-        Key words for use in RFCs to Indicate Requirement Levels
-
-Status of this Memo
-
-   This document specifies an Internet Best Current Practices for the
-   Internet Community, and requests discussion and suggestions for
-   improvements.  Distribution of this memo is unlimited.
+Key words for use in RFCs to Indicate Requirement Levels
 
 Abstract
 
@@ -105,17 +93,6 @@ Abstract
    from a number of RFCs.  In addition, suggestions have been
    incorporated from a number of people including Robert Ullmann, Thomas
    Narten, Neal McBurnett, and Robert Elz.
-
-9. Author's Address
-
-      Scott Bradner
-      Harvard University
-      1350 Mass. Ave.
-      Cambridge, MA 02138
-
-      phone - +1 617 495 3864
-
-      email - sob@harvard.edu
 ```
 
 ## CONVENTIONAL COMMITS 1.0.0 SPECIFICATION
