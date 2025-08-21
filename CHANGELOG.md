@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-01-21
+
+### Added
+- `linter-orchestrator-agent` for multi-language code quality analysis
+- `issue-resolver-agent` for specialized individual issue fixing
+- Linux-style Task ID-based file locking system for parallel processing
+- Support for JavaScript/TypeScript, Python, Go, Rust, and general file linting
+- Parallel agent spawning with graceful conflict resolution
+- Comprehensive stale lock cleanup and error handling
+- Scalable architecture supporting concurrent linting operations
+
+### Enhanced
+- Repository documentation updated with new agent capabilities
+- README.md expanded with linter system usage examples
+- CLAUDE.md updated with complete agent inventory and use cases
+
 ## [1.0.0] - 2025-01-21
 
 ### Added

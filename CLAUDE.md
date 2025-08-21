@@ -12,18 +12,22 @@ This is a Claude Agents configuration repository designed to store specialized A
 claude-agents/
 ├── .claude/
 │   ├── agents/                # Agent definitions
-│   │   └── conventional-commit-validator.md
+│   │   ├── conventional-commit-agent.md
+│   │   ├── linter-orchestrator-agent.md
+│   │   └── issue-resolver-agent.md
 │   └── settings.local.json    # Local permissions configuration
 ├── CLAUDE.md                  # This file
 ├── install.sh                 # Installation script
+├── CHANGELOG.md               # Version history
+├── LICENSE                    # MIT license
 └── README.md                  # Public documentation
 ```
 
 ## Available Agents
 
-### Current Agents (1 total)
+### Current Agents (3 total)
 
-1. **conventional-commit-validator** (aliases: `conventional-commit-agent`)
+1. **conventional-commit-agent**
    - **Purpose**: Validate, format, and create commit messages following Conventional Commits 1.0.0 specification
    - **Model**: sonnet
    - **Color**: green
@@ -33,6 +37,28 @@ claude-agents/
      - Generate properly formatted commit messages from change descriptions
      - Educate teams on conventional commit standards
      - Review and improve commit message quality
+
+2. **linter-orchestrator-agent**
+   - **Purpose**: Multi-language code quality analysis with parallel issue resolution coordination
+   - **Model**: sonnet  
+   - **Color**: blue
+   - **Tools**: Full tool access plus Task spawning capabilities
+   - **Use Cases**:
+     - Comprehensive project-wide linting across multiple languages
+     - Coordinate parallel issue fixing with file locking
+     - Manage stale lock cleanup and system integrity
+     - Generate detailed quality reports with fix summaries
+
+3. **issue-resolver-agent**
+   - **Purpose**: Specialized fixing of individual linting issues with Task ID-based coordination
+   - **Model**: sonnet
+   - **Color**: yellow
+   - **Tools**: File operations, linting tools, coordination utilities
+   - **Use Cases**:
+     - Apply targeted fixes to specific code quality issues
+     - Handle file locking conflicts gracefully
+     - Implement language-specific correction patterns
+     - Maintain system safety with non-breaking changes
 
 ## Primary Purpose
 

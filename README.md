@@ -49,6 +49,26 @@ Use the conventional-commit-agent to validate this commit message: "Added new fe
 - 📚 Educates teams on conventional commit standards
 - 🔧 Suggests improvements for better commit quality
 
+### 🔵 Linter Orchestrator Agent
+**Purpose:** Multi-language code quality analysis with parallel issue resolution
+
+**Key Features:**
+- 🔍 Analyzes JavaScript/TypeScript, Python, Go, Rust, and general files
+- ⚡ Spawns parallel agents for each detected issue
+- 🔒 Linux-style file locking prevents conflicts
+- 🧹 Automatic stale lock cleanup and error handling
+- 📊 Comprehensive reporting with fix summaries
+
+### 🟡 Issue Resolver Agent
+**Purpose:** Specialized fixing of individual linting issues with file coordination
+
+**Key Features:**
+- 🎯 Focused single-issue resolution
+- 🔐 Task ID-based file locking coordination  
+- 🛠️ Language-specific fix implementations
+- 🔄 Graceful conflict handling and retry logic
+- ✨ Safe, non-breaking automated corrections
+
 **Example Usage:**
 ```
 "I've added a new user authentication system and fixed a bug in the login form. 
@@ -66,6 +86,36 @@ feat(auth): add user authentication system
 fix(login): resolve form validation issue
 
 These follow the conventional commits specification with proper types and clear descriptions.
+```
+
+### 🔄 Parallel Linter System
+**Usage:** The linter agents work together for comprehensive code quality management
+
+**Example Usage:**
+```
+"Can you lint my entire project and fix all the issues you can?"
+```
+
+**System Response:**
+```
+🔵 Linter Orchestrator: Scanning project for issues...
+├── Found 23 issues across 8 files
+├── JavaScript: 12 issues detected
+├── Python: 8 issues detected  
+├── Go: 3 issues detected
+
+🟡 Spawning 23 Issue Resolver agents...
+├── Agent-1: Fixing unused variable in src/main.js
+├── Agent-2: Organizing imports in utils.py
+├── Agent-3: Formatting code in main.go
+├── ... (parallel processing)
+
+📊 Results Summary:
+✅ Issues Fixed: 19/23
+🔒 Lock Conflicts: 2 (gracefully handled)
+⚠️  Manual Review: 2 complex issues
+
+Remaining issues require architectural decisions or breaking changes.
 ```
 
 ## Repository Structure
