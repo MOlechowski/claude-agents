@@ -25,7 +25,7 @@ claude-agents/
 
 ## Available Agents
 
-### Current Agents (3 total)
+### Current Agents (7 total)
 
 1. **conventional-commit-agent**
    - **Purpose**: Validate, format, and create commit messages following Conventional Commits 1.0.0 specification
@@ -59,6 +59,51 @@ claude-agents/
      - Handle file locking conflicts gracefully
      - Implement language-specific correction patterns
      - Maintain system safety with non-breaking changes
+
+4. **gitingest-agent**
+   - **Purpose**: Actively generate LLM-optimized repository digests using gitingest tool
+   - **Model**: opus
+   - **Color**: purple
+   - **Tools**: Full tool access for execution and processing
+   - **Use Cases**:
+     - Generate repository digests from GitHub URLs or local paths
+     - Create token-optimized extracts for specific LLM context windows
+     - Process private repositories with secure authentication
+     - Filter and optimize large codebases for AI analysis
+     - Batch process multiple repositories for comparative analysis
+
+5. **changelog-agent**
+   - **Purpose**: Manage CHANGELOG.md files following Keep a Changelog specification
+   - **Model**: sonnet
+   - **Color**: cyan
+   - **Tools**: File operations, git integration
+   - **Use Cases**:
+     - Create and update changelog entries
+     - Parse commits and organize changes
+     - Manage version releases
+     - Maintain proper changelog formatting
+
+6. **backlog-agent**
+   - **Purpose**: Project management using backlog-md Kanban tool
+   - **Model**: sonnet
+   - **Color**: orange
+   - **Tools**: Bash, file operations
+   - **Use Cases**:
+     - Initialize and manage project backlogs
+     - Create and track tasks
+     - Visualize Kanban boards
+     - Manage project workflow states
+
+7. **swift-syntax-researcher**
+   - **Purpose**: SwiftSyntax library expertise and documentation
+   - **Model**: sonnet
+   - **Color**: blue
+   - **Tools**: Research and documentation tools
+   - **Use Cases**:
+     - Provide SwiftSyntax API documentation
+     - Explain visitor patterns and parsing
+     - Debug version-specific API changes
+     - Guide SwiftSyntax implementation
 
 ## Primary Purpose
 
@@ -221,10 +266,18 @@ git commit -m "feat: add new-agent for specific purpose"
 
 ## Agent Categories
 
-Future agents may include:
-- **Quality Assurance**: Code review, testing, security scanning
-- **Development**: Documentation generation, API design, refactoring
-- **Operations**: Deployment, monitoring, performance analysis
-- **Analysis**: Code analysis, dependency review, architecture assessment
+Current agents cover:
+- **Repository Analysis**: GitIngest for LLM-optimized digests
+- **Code Quality**: Linter orchestrator and issue resolver
+- **Version Control**: Conventional commits and changelog management
+- **Project Management**: Backlog Kanban boards
+- **Language Support**: SwiftSyntax expertise
 
-This repository starts small with the conventional commit validator but can grow into a comprehensive collection of specialized development agents.
+Future agents may include:
+- **Security**: Vulnerability scanning, secret detection
+- **Testing**: Test generation, coverage analysis
+- **Documentation**: API docs, README generation
+- **Performance**: Profiling, optimization suggestions
+- **Architecture**: System design, dependency analysis
+
+This repository continues to grow with specialized development agents for comprehensive workflow support.

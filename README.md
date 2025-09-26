@@ -64,10 +64,45 @@ Use the conventional-commit-agent to validate this commit message: "Added new fe
 
 **Key Features:**
 - 🎯 Focused single-issue resolution
-- 🔐 Task ID-based file locking coordination  
+- 🔐 Task ID-based file locking coordination
 - 🛠️ Language-specific fix implementations
 - 🔄 Graceful conflict handling and retry logic
 - ✨ Safe, non-breaking automated corrections
+
+### 🟣 GitIngest Repository Processor
+**Purpose:** Actively generate LLM-optimized repository digests using gitingest tool
+
+**Key Features:**
+- 🚀 Executes gitingest commands to create repository digests
+- 📦 Handles installation and configuration automatically
+- 🎯 Optimizes output for specific token limits
+- 🔐 Manages authentication for private repositories
+- 📊 Provides comprehensive execution statistics
+
+**Example Usage:**
+```
+"Generate a digest of the React repository for analysis"
+```
+
+**Agent Response:**
+```
+I'll use gitingest to create an LLM-optimized digest of the React repository:
+
+Installing gitingest...
+✓ gitingest installed successfully
+
+Executing: gitingest https://github.com/facebook/react --output react-digest.txt
+
+📊 Digest Statistics:
+- Files processed: 1,847
+- Total size: 4.2 MB
+- Estimated tokens: ~1.2M
+- Output file: react-digest.txt
+
+The digest is ready for LLM analysis with complete repository structure and source code.
+```
+
+### 🟢 Conventional Commit Validator
 
 **Example Usage:**
 ```
@@ -124,10 +159,18 @@ Remaining issues require architectural decisions or breaking changes.
 claude-agents/
 ├── .claude/
 │   ├── agents/                          # Agent definitions
-│   │   └── conventional-commit-validator.md
+│   │   ├── conventional-commit-agent.md
+│   │   ├── linter-orchestrator-agent.md
+│   │   ├── issue-resolver-agent.md
+│   │   ├── gitingest-agent.md
+│   │   ├── changelog-agent.md
+│   │   ├── backlog-agent.md
+│   │   └── swift-syntax-researcher.md
 │   └── settings.local.json              # Permissions configuration
 ├── install.sh                           # Installation script
-├── CLAUDE.md                           # Development documentation  
+├── CHANGELOG.md                         # Version history
+├── CLAUDE.md                           # Development documentation
+├── LICENSE                             # MIT license
 └── README.md                           # This file
 ```
 

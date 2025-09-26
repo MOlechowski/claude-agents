@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-01-26
+
+### Added
+- `gitingest-agent` for active repository digest generation using gitingest tool
+- Comprehensive RFC-style documentation following conventional-commit-agent pattern
+- Automatic gitingest tool installation and execution capabilities
+- Token-optimized digest generation for various LLM context windows
+- Secure private repository processing with authentication handling
+- Execution workflows for multiple ingestion scenarios
+- Complete CLI parameter specifications with RFC 2119 requirement levels
+- Integration patterns for piping and batch processing
+
+### Enhanced
+- Repository documentation with GitIngest Repository Processor section
+- README.md with detailed gitingest agent usage examples
+- Agent collection now includes 7 specialized agents
+- Documentation structure with comprehensive execution specifications
+
 ## [1.1.0] - 2025-01-21
 
 ### Added
