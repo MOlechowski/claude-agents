@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Enhanced
+- `gitingest-agent` upgraded with intelligent large repository handling capabilities
+- Added hierarchical multi-digest generation for repositories > 500 files
+- Implemented smart chunking strategies (directory, semantic, token-aware, adaptive)
+- New CLI parameters for chunking control (`--chunking-strategy`, `--max-digest-size`, `--create-index`)
+- Comprehensive root summary format with INDEX.md navigation for multi-digest outputs
+- Parallel processing support for extra-large repositories (> 2000 files)
+- Token-aware chunking with configurable overlap (10-15%) for context preservation
+- Three-tier processing model: Component → Module → Root Summary digests
+- Enhanced error handling for chunking failures and memory constraints
+- Automatic strategy selection based on repository size detection
+
 ## [1.2.0] - 2025-01-26
 
 ### Added

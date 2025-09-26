@@ -124,6 +124,30 @@ product while another vendor may omit the same item. ```
   - Default: repository default branch
   - MUST verify branch exists
 
+- `--chunking-strategy <STRATEGY>`: Processing strategy for large repos (SHOULD use for large repositories)
+  - Options: `auto`, `directory`, `semantic`, `fixed`
+  - Default: `auto` (automatically selects based on repo size)
+  - RECOMMENDED for repositories > 500 files
+
+- `--max-digest-size <TOKENS>`: Maximum tokens per digest file (SHOULD set for chunking)
+  - Default: 100000 tokens
+  - Triggers automatic chunking when exceeded
+  - SHOULD use with `--chunking-strategy`
+
+- `--create-index`: Generate index file linking all digests (SHOULD use with chunking)
+  - Creates `INDEX.md` with links to all sub-digests
+  - Includes statistics and recommendations
+
+- `--parallel-processing`: Process directories in parallel (MAY use for speed)
+  - Default: false
+  - SHOULD use for repositories > 1000 files
+  - Requires sufficient system resources
+
+- `--overlap-percentage <N>`: Context overlap between chunks (MAY adjust)
+  - Default: 10% of chunk size
+  - Range: 5-20%
+  - Higher values preserve more context but increase size
+
 ## OUTPUT FORMAT SPECIFICATION
 
 **Standard Digest Structure:**
@@ -156,7 +180,42 @@ File: [path]
 1. Small context (< 16k tokens): Include all source files
 2. Medium context (16k-100k tokens): Exclude tests and docs
 3. Large context (100k-200k tokens): Focus on core logic
-4. Extra large (> 200k tokens): Strategic sampling required
+4. Extra large (> 200k tokens): Use hierarchical chunking strategy
+
+## LARGE REPOSITORY HANDLING SPECIFICATION
+
+**Automatic Size Detection & Strategy Selection:**
+- **Small repositories** (< 100 files): Single digest generation
+- **Medium repositories** (100-500 files): Directory-based chunking
+- **Large repositories** (> 500 files): Hierarchical multi-digest approach
+- **Extra large repositories** (> 2000 files): Parallel hierarchical processing
+
+**Three-Tier Processing Model:**
+1. **Component Digests**: Process major directories separately
+   - Generate focused digests for src/, lib/, tests/, docs/, etc.
+   - Apply component-specific filters and optimizations
+   - Maintain semantic boundaries
+
+2. **Module Digests**: Group related components
+   - Combine frontend components into frontend-digest.txt
+   - Aggregate backend services into backend-digest.txt
+   - Group infrastructure code into infra-digest.txt
+
+3. **Root Summary**: High-level overview
+   - Repository statistics and structure
+   - Links to all generated sub-digests
+   - Token counts and consumption recommendations
+   - Processing metadata and timestamps
+
+**Chunking Strategy Decision Matrix:**
+```
+Repository Size | Strategy      | Output Structure
+----------------|---------------|------------------
+< 100 files     | Single        | digest.txt
+100-500 files   | Directory     | {dir}-digest.txt files
+500-2000 files  | Hierarchical  | Multiple digests + INDEX.md
+> 2000 files    | Parallel      | Parallel chunks + INDEX.md
+```
 
 ## EXECUTION WORKFLOWS
 
@@ -209,6 +268,150 @@ gitingest https://github.com/large/repo \
   --output optimized-digest.txt
 ```
 
+**5. Hierarchical Digest Generation Workflow:**
+```bash
+# Phase 1: Repository Analysis
+echo "Analyzing repository size and structure..."
+REPO_URL="https://github.com/large/repo"
+FILE_COUNT=$(git ls-files | wc -l)  # or use API to get file count
+
+# Phase 2: Strategy Selection
+if [ $FILE_COUNT -lt 100 ]; then
+  echo "Small repository: generating single digest"
+  gitingest $REPO_URL --output digest.txt
+
+elif [ $FILE_COUNT -lt 500 ]; then
+  echo "Medium repository: using directory-based chunking"
+  mkdir -p digests/
+
+  # Process main directories
+  for dir in src lib tests docs; do
+    gitingest $REPO_URL/tree/main/$dir \
+      --output digests/${dir}-digest.txt \
+      --max-digest-size 50000
+  done
+
+elif [ $FILE_COUNT -lt 2000 ]; then
+  echo "Large repository: using hierarchical multi-digest approach"
+  mkdir -p digests/components digests/modules
+
+  # Component-level digests
+  gitingest $REPO_URL/tree/main/src \
+    --output digests/components/src-digest.txt \
+    --max-digest-size 50000
+
+  gitingest $REPO_URL/tree/main/tests \
+    --output digests/components/tests-digest.txt \
+    --max-digest-size 30000
+
+  # Module-level digests
+  gitingest $REPO_URL/tree/main/frontend \
+    --output digests/modules/frontend-digest.txt \
+    --chunking-strategy semantic
+
+  gitingest $REPO_URL/tree/main/backend \
+    --output digests/modules/backend-digest.txt \
+    --chunking-strategy semantic
+
+else
+  echo "Extra large repository: using parallel hierarchical processing"
+  mkdir -p digests/parallel
+
+  # Parallel processing of major components
+  gitingest $REPO_URL \
+    --chunking-strategy auto \
+    --parallel-processing \
+    --max-digest-size 50000 \
+    --create-index \
+    --output digests/parallel/
+fi
+
+# Phase 3: Generate Root Summary and Index
+gitingest $REPO_URL \
+  --output digests/root-summary.txt \
+  --max-digest-size 10000 \
+  --exclude-pattern "**/*.{js,py,java,cpp,c,h}" \
+  --create-index
+
+# Phase 4: Create Master Index
+echo "Creating master index..."
+cat > digests/INDEX.md << 'EOF'
+# Repository Digest Index
+
+## Processing Summary
+- Repository: $REPO_URL
+- Total Files: $FILE_COUNT
+- Processing Strategy: $([ $FILE_COUNT -lt 100 ] && echo "Single" || \
+                       [ $FILE_COUNT -lt 500 ] && echo "Directory" || \
+                       [ $FILE_COUNT -lt 2000 ] && echo "Hierarchical" || \
+                       echo "Parallel Hierarchical")
+- Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+## Available Digests
+$(ls -la digests/*.txt digests/**/*.txt 2>/dev/null | awk '{print "- " $NF}')
+
+## Recommendations
+- Start with: root-summary.txt for overview
+- For code review: src-digest.txt
+- For testing: tests-digest.txt
+- Full analysis token budget: ~$(calculate_total_tokens)
+EOF
+```
+
+## SMART CHUNKING STRATEGIES
+
+**Directory-Based Chunking:**
+```bash
+# Identify and process top-level directories
+DIRS=$(find . -maxdepth 1 -type d -not -path '*/\.*' | sort)
+
+for dir in $DIRS; do
+  echo "Processing directory: $dir"
+  gitingest $REPO_URL/tree/main/$dir \
+    --output "digests/${dir##*/}-digest.txt" \
+    --max-digest-size 50000
+done
+```
+
+**Semantic Chunking:**
+```bash
+# Group by file type and purpose
+# Frontend files
+gitingest $REPO_URL \
+  --include-pattern "**/*.{jsx,tsx,css,scss}" \
+  --output digests/frontend-digest.txt
+
+# Backend files
+gitingest $REPO_URL \
+  --include-pattern "**/*.{py,java,go,rs}" \
+  --exclude-pattern "**/test*" \
+  --output digests/backend-digest.txt
+
+# Configuration files
+gitingest $REPO_URL \
+  --include-pattern "**/*.{json,yaml,yml,toml,ini,env*}" \
+  --output digests/config-digest.txt
+```
+
+**Token-Aware Chunking with Overlap:**
+```bash
+# Process with controlled token limits and overlap
+gitingest $REPO_URL \
+  --chunking-strategy fixed \
+  --max-digest-size 50000 \
+  --overlap-percentage 15 \
+  --output digests/chunk-{n}.txt
+```
+
+**Adaptive Chunking:**
+```bash
+# Let gitingest automatically determine best strategy
+gitingest $REPO_URL \
+  --chunking-strategy auto \
+  --create-index \
+  --output digests/
+```
+
 ## COMMON EXECUTION SCENARIOS
 
 **Public Repository Analysis:**
@@ -246,6 +449,136 @@ Action: Generate two digests → Provide comparison structure
 Result: Side-by-side analysis-ready outputs
 ```
 
+**Large Repository Processing:**
+```
+User: "Generate digest of the kubernetes repository"
+Action: Detect size (>10k files) → Use parallel hierarchical processing
+Result: Multiple component digests + INDEX.md with navigation
+```
+
+## ROOT SUMMARY FORMAT SPECIFICATION
+
+**Standard Root Summary Structure for Large Repositories:**
+```markdown
+# Repository Digest Index: [repository-name]
+
+## Overview
+- **Repository**: [URL or path]
+- **Total Files**: X,XXX
+- **Total Size**: XX MB
+- **Estimated Tokens**: ~X.XM
+- **Processing Strategy**: [Single/Directory/Hierarchical/Parallel]
+- **Generated**: YYYY-MM-DD HH:MM:SS UTC
+- **Digest Count**: X files
+
+## Component Digests
+
+### Core Implementation
+- **File**: `digests/components/src-digest.txt`
+- **Files Processed**: 450
+- **Tokens**: ~48,000
+- **Coverage**: Main application logic, business rules, APIs
+- **Key Directories**: `/src`, `/lib`, `/core`
+
+### Testing Suite
+- **File**: `digests/components/tests-digest.txt`
+- **Files Processed**: 230
+- **Tokens**: ~35,000
+- **Coverage**: Unit tests, integration tests, e2e tests
+- **Key Directories**: `/tests`, `/test`, `/__tests__`
+
+### Documentation
+- **File**: `digests/components/docs-digest.txt`
+- **Files Processed**: 85
+- **Tokens**: ~15,000
+- **Coverage**: API documentation, guides, tutorials
+- **Key Directories**: `/docs`, `/documentation`
+
+### Frontend Components
+- **File**: `digests/modules/frontend-digest.txt`
+- **Files Processed**: 320
+- **Tokens**: ~42,000
+- **Coverage**: React/Vue/Angular components, styles, assets
+- **Technologies**: JavaScript, TypeScript, CSS, SCSS
+
+### Backend Services
+- **File**: `digests/modules/backend-digest.txt`
+- **Files Processed**: 280
+- **Tokens**: ~38,000
+- **Coverage**: API endpoints, database models, services
+- **Technologies**: Python, Java, Go, Node.js
+
+## Module Organization
+
+### By Technology Stack
+- **JavaScript/TypeScript**: frontend-digest.txt, node-backend-digest.txt
+- **Python**: python-services-digest.txt, ml-models-digest.txt
+- **Go**: go-microservices-digest.txt
+- **Configuration**: config-digest.txt, infrastructure-digest.txt
+
+### By Functionality
+- **Core Business Logic**: core-digest.txt
+- **API Layer**: api-digest.txt
+- **Data Layer**: database-digest.txt
+- **Infrastructure**: infra-digest.txt
+
+## Consumption Recommendations
+
+### For Different Use Cases
+1. **Quick Overview**: Start with this INDEX.md and root-summary.txt
+2. **Code Review**: Focus on src-digest.txt and relevant module digests
+3. **API Understanding**: Read api-digest.txt and docs-digest.txt
+4. **Bug Investigation**: Check src-digest.txt and tests-digest.txt
+5. **Architecture Analysis**: Review all module digests sequentially
+
+### Token Budget Guidelines
+- **Minimal Analysis** (~50k tokens): Root summary + 1 component
+- **Standard Analysis** (~100k tokens): Root + 2-3 key components
+- **Comprehensive Review** (~200k tokens): All core components
+- **Full Repository** (~500k+ tokens): All digests with overlap
+
+## Processing Statistics
+
+### Performance Metrics
+- **Processing Time**: XX minutes
+- **Parallel Jobs**: X
+- **Files Skipped**: XXX (binaries, images, etc.)
+- **Compression Ratio**: X:1
+
+### File Type Distribution
+```
+JavaScript/TypeScript : 35% ████████████████████
+Python               : 25% ██████████████
+Go                   : 20% ███████████
+Documentation        : 10% █████
+Configuration        : 10% █████
+```
+
+## Navigation Guide
+
+### Quick Links
+- [Root Summary](digests/root-summary.txt) - High-level overview
+- [Source Code](digests/components/src-digest.txt) - Main implementation
+- [Tests](digests/components/tests-digest.txt) - Test coverage
+- [Documentation](digests/components/docs-digest.txt) - Project docs
+- [Frontend](digests/modules/frontend-digest.txt) - UI components
+- [Backend](digests/modules/backend-digest.txt) - Server logic
+
+### Suggested Reading Order
+1. root-summary.txt (overview)
+2. src-digest.txt (core logic)
+3. api-digest.txt (interfaces)
+4. tests-digest.txt (validation)
+5. Module digests as needed
+
+## Notes
+- All digests use UTF-8 encoding
+- File paths preserved relative to repository root
+- Binary files and images excluded
+- Token counts are estimates based on ~1.3 tokens/character
+- Overlapping context maintained at chunk boundaries (10-15%)
+```
+
 ## QUALITY STANDARDS
 
 **Execution Requirements:**
@@ -254,6 +587,8 @@ Result: Side-by-side analysis-ready outputs
 - MUST provide execution statistics
 - SHOULD estimate token counts
 - SHOULD warn about large outputs
+- MUST detect repository size and auto-select chunking strategy
+- SHOULD generate index files for multi-digest outputs
 
 **Security Standards:**
 - MUST NOT include tokens in outputs or logs
@@ -268,6 +603,8 @@ Result: Side-by-side analysis-ready outputs
 - SHOULD filter test files for production analysis
 - MAY provide multiple optimization presets
 - SHOULD calculate optimal parameters based on repo size
+- MUST implement chunking for repositories > 500 files
+- SHOULD maintain 10-15% overlap between chunks
 
 **Output Quality:**
 - MUST preserve file paths and structure
@@ -275,6 +612,15 @@ Result: Side-by-side analysis-ready outputs
 - SHOULD provide meaningful statistics
 - MUST handle special characters properly
 - SHOULD format for maximum LLM compatibility
+- MUST create INDEX.md for multi-digest outputs
+- SHOULD include navigation and consumption recommendations
+
+**Chunking Quality Standards:**
+- MUST maintain semantic boundaries when possible
+- SHOULD group related files together
+- MUST track token counts per chunk
+- SHOULD balance chunk sizes for optimal processing
+- MUST provide clear chunk identification
 
 ## ERROR HANDLING
 
@@ -298,6 +644,15 @@ Result: Side-by-side analysis-ready outputs
 - File write permission → Check directory permissions
 - Output too large → Recommend filtering strategies
 - Encoding issues → Handle UTF-8 properly
+- Token limit exceeded → Automatically trigger chunking
+- Memory exhaustion → Switch to streaming mode
+
+**Chunking Errors:**
+- Repository too large for single digest → Auto-enable hierarchical processing
+- Chunk overlap conflicts → Adjust overlap percentage
+- Parallel processing failure → Fallback to sequential
+- Index generation failure → Provide manual index template
+- Directory not found → Skip and note in index
 
 ## INTEGRATION PATTERNS
 
