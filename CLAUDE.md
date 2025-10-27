@@ -25,7 +25,7 @@ claude-agents/
 
 ## Available Agents
 
-### Current Agents (7 total)
+### Current Agents (8 total)
 
 1. **conventional-commit-agent**
    - **Purpose**: Validate, format, and create commit messages following Conventional Commits 1.0.0 specification
@@ -60,7 +60,20 @@ claude-agents/
      - Implement language-specific correction patterns
      - Maintain system safety with non-breaking changes
 
-4. **gitingest-agent**
+4. **documentation-agent**
+   - **Purpose**: Create, update, and maintain comprehensive project documentation
+   - **Model**: sonnet
+   - **Color**: cyan
+   - **Tools**: Full tool access for code analysis and documentation generation
+   - **Use Cases**:
+     - Generate README files with proper structure and examples
+     - Create API documentation from code analysis
+     - Write technical specifications and architecture docs
+     - Generate user guides and tutorials
+     - Update documentation to match current codebase
+     - Validate documentation completeness and accuracy
+
+5. **gitingest-agent**
    - **Purpose**: Actively generate LLM-optimized repository digests using gitingest tool
    - **Model**: opus
    - **Color**: purple
@@ -72,10 +85,10 @@ claude-agents/
      - Filter and optimize large codebases for AI analysis
      - Batch process multiple repositories for comparative analysis
 
-5. **changelog-agent**
+6. **changelog-agent**
    - **Purpose**: Manage CHANGELOG.md files following Keep a Changelog specification
    - **Model**: sonnet
-   - **Color**: cyan
+   - **Color**: blue
    - **Tools**: File operations, git integration
    - **Use Cases**:
      - Create and update changelog entries
@@ -83,7 +96,7 @@ claude-agents/
      - Manage version releases
      - Maintain proper changelog formatting
 
-6. **backlog-agent**
+7. **backlog-agent**
    - **Purpose**: Project management using backlog-md Kanban tool
    - **Model**: sonnet
    - **Color**: orange
@@ -94,7 +107,7 @@ claude-agents/
      - Visualize Kanban boards
      - Manage project workflow states
 
-7. **swift-syntax-researcher**
+8. **swift-syntax-researcher**
    - **Purpose**: SwiftSyntax library expertise and documentation
    - **Model**: sonnet
    - **Color**: blue
@@ -271,12 +284,12 @@ Current agents cover:
 - **Code Quality**: Linter orchestrator and issue resolver
 - **Version Control**: Conventional commits and changelog management
 - **Project Management**: Backlog Kanban boards
+- **Documentation**: Comprehensive project documentation (README, API, specs, guides)
 - **Language Support**: SwiftSyntax expertise
 
 Future agents may include:
 - **Security**: Vulnerability scanning, secret detection
 - **Testing**: Test generation, coverage analysis
-- **Documentation**: API docs, README generation
 - **Performance**: Profiling, optimization suggestions
 - **Architecture**: System design, dependency analysis
 

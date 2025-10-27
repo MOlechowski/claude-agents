@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `documentation-agent` for comprehensive project documentation management
+- Automated generation and maintenance of README files, API documentation, technical specs, and user guides
+- On-demand documentation validation and completeness checking
+- Markdown best practices enforcement with consistent formatting
+- Code analysis for extracting API signatures, parameters, and type information
+- Integration with test files for generating realistic usage examples
+- RFC 2119 compliance standards for documentation requirements
+
 ### Enhanced
 - `gitingest-agent` upgraded with intelligent large repository handling capabilities
 - Added hierarchical multi-digest generation for repositories > 500 files

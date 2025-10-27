@@ -69,6 +69,38 @@ Use the conventional-commit-agent to validate this commit message: "Added new fe
 - 🔄 Graceful conflict handling and retry logic
 - ✨ Safe, non-breaking automated corrections
 
+### 🔷 Documentation Agent
+**Purpose:** Create, update, and maintain comprehensive project documentation
+
+**Key Features:**
+- 📝 Generates README files, API docs, technical specs, and user guides
+- 🔄 Updates documentation to match current codebase state
+- ✅ Validates documentation completeness and accuracy
+- 📋 Follows markdown best practices for clean, consistent formatting
+- 🤖 Fully automated documentation generation from code analysis
+
+**Example Usage:**
+```
+"Update the README and API docs to reflect the new features I added"
+```
+
+**Agent Response:**
+```
+I'll analyze your recent changes and update the documentation:
+
+✓ README.md updated:
+  - Added new features section for user authentication
+  - Updated installation steps for new dependencies
+  - Added usage examples for new API endpoints
+
+✓ API documentation updated:
+  - Documented 3 new functions with parameters and return types
+  - Added code examples for each endpoint
+  - Updated TypeScript type definitions
+
+All documentation now reflects the current codebase state.
+```
+
 ### 🟣 GitIngest Repository Processor
 **Purpose:** Actively generate LLM-optimized repository digests using gitingest tool
 
@@ -162,6 +194,7 @@ claude-agents/
 │   │   ├── conventional-commit-agent.md
 │   │   ├── linter-orchestrator-agent.md
 │   │   ├── issue-resolver-agent.md
+│   │   ├── documentation-agent.md
 │   │   ├── gitingest-agent.md
 │   │   ├── changelog-agent.md
 │   │   ├── backlog-agent.md
@@ -229,8 +262,7 @@ We welcome contributions! Here's how you can help:
 Future agent categories we're considering:
 
 - **🔒 Security Agents:** Code security scanning, vulnerability assessment
-- **🧪 Testing Agents:** Test generation, coverage analysis, quality assurance  
-- **📖 Documentation Agents:** Auto-documentation, API docs, README generation
+- **🧪 Testing Agents:** Test generation, coverage analysis, quality assurance
 - **⚡ Performance Agents:** Performance analysis, optimization suggestions
 - **🏗️ Architecture Agents:** System design, code review, refactoring guidance
 
